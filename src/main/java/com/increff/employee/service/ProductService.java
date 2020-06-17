@@ -27,8 +27,8 @@ public class ProductService {
 	}
 
 	@Transactional(rollbackOn = ApiException.class)
-	public ProductPojo get(String product) throws ApiException {
-		return getCheck(product);
+	public ProductPojo get(String barcode) throws ApiException {
+		return getCheck(barcode);
 	}
 
 	@Transactional(rollbackOn = ApiException.class)

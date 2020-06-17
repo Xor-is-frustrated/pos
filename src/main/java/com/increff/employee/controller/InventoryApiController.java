@@ -35,11 +35,13 @@ public class InventoryApiController {
 	@RequestMapping(path = "/api/inventory", method = RequestMethod.POST)
 	public void add(@RequestBody InventoryForm form) throws ApiException {
 		ProductPojo p = productservice.get(form.getProduct());
+		if(p.getQuantity()!=null)
+		{
+			throw new ApiException("the inventory for this product already exists. Please update the inventory");
+		}
 		InventoryPojo inv = convert(form, p);
 		inventoryservice.add(inv);
-		int id = p.getId();
-		p.setQuantity(inv);
-		productservice.update(id, p);
+
 	}
 
 	@ApiOperation(value = "Deletes an inventory item")
@@ -61,15 +63,19 @@ public class InventoryApiController {
 		List<InventoryPojo> list = inventoryservice.getAll();
 		return convert(list);
 	}
-
+	
 	@ApiOperation(value = "Updates an inventory")
 	@RequestMapping(path = "/api/inventory/{id}", method = RequestMethod.PUT)
 	public void update(@PathVariable int id, @RequestBody InventoryForm form) throws ApiException {
 		ProductPojo p = productservice.get(form.getProduct());
+		if(p.getQuantity()!=null)
+		{
+			throw new ApiException("the inventory for this product already exists. Please update the inventory");
+		}
 		InventoryPojo inv = convert(form, p);
 		inventoryservice.update(id, inv);
 	}
-
+	
 	private static InventoryData convert(InventoryPojo p, int id) {
 		InventoryData d = new InventoryData();
 		d.setId(id);
@@ -89,7 +95,7 @@ public class InventoryApiController {
 	{
 		List<InventoryData> list2 = new ArrayList<InventoryData>();
 		for (InventoryPojo p : list) {
-			int id = p.getProduct().getId();
+			int id = p.getId();
 			list2.add(convert(p, id));
 		}
 		return list2;

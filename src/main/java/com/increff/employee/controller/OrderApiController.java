@@ -51,9 +51,6 @@ public class OrderApiController {
 			orderitemservice.update(pojo.getId(), p1);
 		}
 
-		p.setOrderitem(hSet);
-		orderservice.update(p.getId(), p);
-
 	}
 
 	@ApiOperation(value = "Deletes a order")

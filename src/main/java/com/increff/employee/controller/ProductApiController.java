@@ -2,6 +2,7 @@ package com.increff.employee.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,10 +15,12 @@ import com.increff.employee.model.ProductData;
 import com.increff.employee.model.ProductForm;
 import com.increff.employee.pojo.BrandPojo;
 import com.increff.employee.pojo.InventoryPojo;
+import com.increff.employee.pojo.OrderItemPojo;
 import com.increff.employee.pojo.ProductPojo;
 import com.increff.employee.service.ApiException;
 import com.increff.employee.service.BrandService;
 import com.increff.employee.service.InventoryService;
+import com.increff.employee.service.OrderItemService;
 import com.increff.employee.service.ProductService;
 
 import io.swagger.annotations.Api;
@@ -35,6 +38,9 @@ public class ProductApiController {
 
 	@Autowired
 	private InventoryService inventoryservice;
+	
+	@Autowired
+	private OrderItemService orderitemservice;
 
 	@ApiOperation(value = "Adds a product")
 	@RequestMapping(path = "/api/product", method = RequestMethod.POST)
@@ -43,17 +49,23 @@ public class ProductApiController {
 		BrandPojo b = brandservice.get(form.getBrand());
 		ProductPojo p = convert(form, b);
 		service.add(p);
-		int id = b.getId();
-		b.getProduct().add(p);
-		brandservice.update(id, b);
+
 	}
 
 	@ApiOperation(value = "Deletes a product")
 	@RequestMapping(path = "/api/product/{id}", method = RequestMethod.DELETE)
 	public void delete(@PathVariable int id) throws ApiException {
-		InventoryPojo ip = service.get(id).getQuantity();
+		ProductPojo p=service.get(id);
+		InventoryPojo ip = p.getQuantity();
+		Set<OrderItemPojo> item=p.getItem();
 		if (ip != null) {
 			inventoryservice.delete(ip.getId());
+		}
+		if(item!=null)
+		{
+			for(OrderItemPojo pojo:item) {
+				orderitemservice.delete(pojo.getId());
+			}
 		}
 		service.delete(id);
 	}

@@ -1,5 +1,7 @@
 package com.increff.employee.pojo;
 
+import java.util.Set;
+
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -7,6 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 @Entity
@@ -26,6 +29,18 @@ public class ProductPojo {
 	@OneToOne(mappedBy="product",fetch = FetchType.EAGER)
 	private InventoryPojo quantity;
 	
+	@OneToMany(mappedBy = "product",fetch = FetchType.EAGER)
+	private Set<OrderItemPojo> item;
+		
+
+	public Set<OrderItemPojo> getItem() {
+		return item;
+	}
+
+	public void setItem(Set<OrderItemPojo> item) {
+		this.item = item;
+	}
+
 	public InventoryPojo getQuantity() {
 		return quantity;
 	}

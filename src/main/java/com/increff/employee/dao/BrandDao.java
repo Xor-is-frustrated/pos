@@ -18,6 +18,10 @@ public class BrandDao extends AbstractDao {
 	private static String select_brand = "select p from BrandPojo p where brand=:brand";
 	private static String select_brand_category = "select p from BrandPojo p where brand=:brand and category=:category";
 	private static String select_all = "select p from BrandPojo p";
+	private static String select_categories = "select p from BrandPojo p group by p.category";
+	private static String select_brands = "select p from BrandPojo p group by p.brand";
+	private static String select_distinct_category = "select p from BrandPojo p where category=:category";
+	private static String select_distinct_brand = "select p from BrandPojo p where brand=:brand";
 
 	@Transactional
 	public void insert(BrandPojo b) {
@@ -32,6 +36,27 @@ public class BrandDao extends AbstractDao {
 
 	public List<BrandPojo> selectAll() {
 		TypedQuery<BrandPojo> query = getQuery(select_all, BrandPojo.class);
+		return query.getResultList();
+	}
+	
+	public List<BrandPojo> selectCategories() {
+		TypedQuery<BrandPojo> query = getQuery(select_categories, BrandPojo.class);
+		return query.getResultList();
+	}
+	
+	public List<BrandPojo> selectBrands() {
+		TypedQuery<BrandPojo> query = getQuery(select_brands, BrandPojo.class);
+		return query.getResultList();
+	}
+	
+	public List<BrandPojo> selectDistinctCategories(String category) {
+		TypedQuery<BrandPojo> query = getQuery(select_distinct_category, BrandPojo.class);
+		query.setParameter("category", category);
+		return query.getResultList();
+	}
+	public List<BrandPojo> selectDistinctBrands(String brand) {
+		TypedQuery<BrandPojo> query = getQuery(select_distinct_brand, BrandPojo.class);
+		query.setParameter("brand", brand);
 		return query.getResultList();
 	}
 

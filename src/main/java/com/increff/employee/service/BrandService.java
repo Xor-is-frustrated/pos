@@ -62,6 +62,28 @@ public class BrandService {
 		return dao.selectAll();
 	}
 	
+	@Transactional
+	public List<BrandPojo> getCategories() {
+		return dao.selectCategories();
+	}
+	
+	@Transactional
+	public List<BrandPojo> getBrands() {
+		return dao.selectBrands();
+	}
+	
+	@Transactional
+	public List<BrandPojo> getDistinctCategories(String category) {
+		return dao.selectDistinctCategories(category);
+	}
+	
+	@Transactional
+	public List<BrandPojo> getDistinctBrands(String brand) {
+		return dao.selectDistinctBrands(brand);
+	}
+	
+	
+	
 	@Transactional(rollbackOn  = ApiException.class)
 	public void update(int id, BrandPojo p) throws ApiException {
 		normalize(p);

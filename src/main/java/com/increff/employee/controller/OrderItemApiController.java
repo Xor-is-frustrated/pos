@@ -12,8 +12,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.increff.employee.model.OrderItemData;
 import com.increff.employee.model.OrderItemForm;
+import com.increff.employee.pojo.InventoryPojo;
 import com.increff.employee.pojo.OrderItemPojo;
+import com.increff.employee.pojo.ProductPojo;
 import com.increff.employee.service.ApiException;
+import com.increff.employee.service.InventoryService;
 import com.increff.employee.service.OrderItemService;
 import com.increff.employee.service.ProductService;
 
@@ -27,17 +30,36 @@ public class OrderItemApiController {
 	@Autowired
 	private OrderItemService service;
 
+
+	@Autowired
+	private InventoryService inventoryservice;
+	
 	@Autowired
 	private ProductService productservice;
 
 	@ApiOperation(value = "Adds a item")
 	@RequestMapping(path = "/api/orderitem", method = RequestMethod.POST)
 	public void add(@RequestBody OrderItemForm form) throws ApiException {
-		double price = productservice.get(form.getProductId()).getMrp() * form.getQuantity();
-		OrderItemPojo p = convert(form, price);
+		
+		ProductPojo pojo=productservice.get(form.getBarcode());
+		OrderItemPojo p = convert(form, pojo);
+		int quantity=0;
+		if(pojo.getQuantity()==null)
+		{
+			throw new ApiException("quantity exceeds inventory quantity, please reduce the quantity to"+quantity);
+		}
+		quantity=pojo.getQuantity().getQuantity();
+		if( quantity <p.getQuantity())
+		{
+			throw new ApiException("quantity exceeds inventory quantity, please reduce the quantity"+quantity);
+		}
+		quantity-=p.getQuantity();
+		InventoryPojo inv = pojo.getQuantity();
+		inv.setQuantity(quantity);
+		inventoryservice.update(inv.getId(), inv);
 		service.add(p);
 	}
-
+ 
 	@ApiOperation(value = "Deletes a item")
 	@RequestMapping(path = "/api/orderitem/{id}", method = RequestMethod.DELETE)
 	public void delete(@PathVariable int id) throws ApiException {
@@ -54,33 +76,53 @@ public class OrderItemApiController {
 	@ApiOperation(value = "Gets list of all items")
 	@RequestMapping(path = "/api/orderitem", method = RequestMethod.GET)
 	public List<OrderItemData> getAll() {
-		List<OrderItemPojo> list = service.getAll();
+		List<OrderItemPojo> list = service.getnull();
 		return convert(list);
 	}
-
+ 
 	@ApiOperation(value = "Updates a item")
 	@RequestMapping(path = "/api/orderitem/{id}", method = RequestMethod.PUT)
 	public void update(@PathVariable int id, @RequestBody OrderItemForm form) throws ApiException {
-		double price = productservice.get(form.getProductId()).getMrp()* form.getQuantity();
-		OrderItemPojo p = convert(form, price);
+		ProductPojo pojo=productservice.get(form.getBarcode());
+		OrderItemPojo p = convert(form, pojo);
+		int quantity= inventoryservice.get(id).getQuantity();
+		quantity-=p.getQuantity();
+		int quantity1=0;
+		if(pojo.getQuantity()==null)
+		{
+			throw new ApiException("quantity exceeds inventory quantity, please reduce the quantity to"+quantity1);
+		}
+		quantity1=pojo.getQuantity().getQuantity();
+		if( quantity <p.getQuantity())
+		{
+			throw new ApiException("quantity exceeds inventory quantity, please reduce the quantity"+quantity1);
+		}
+		quantity1-=quantity;
+		InventoryPojo inv = pojo.getQuantity();
+		inv.setQuantity(quantity1);
+		inventoryservice.update(inv.getId(), inv);
 		service.update(id, p);
 	}
-
+	
 	private static OrderItemData convert(OrderItemPojo p) {
 		OrderItemData d = new OrderItemData();
+		d.setBarcode(p.getProduct().getBarcode());
 		d.setSellingprice(p.getSellingPrice());
 		d.setId(p.getId());
-		d.setProductId(p.getProductId());
+		d.setProduct(p.getProduct().getProduct());
 		d.setQuantity(p.getQuantity());
+		d.setMrp(p.getProduct().getMrp());
 		return d;
 	}
-
-	private static OrderItemPojo convert(OrderItemForm f, double price) {
-		OrderItemPojo p = new OrderItemPojo();
-		p.setQuantity(f.getQuantity());
-		p.setProductId(f.getProductId());
-		p.setSellingPrice(price);
-		return p;
+	
+	private static OrderItemPojo convert(OrderItemForm f, ProductPojo p) {
+		OrderItemPojo item = new OrderItemPojo();
+		double price=p.getMrp()*f.getQuantity();
+		
+		item.setQuantity(f.getQuantity());
+		item.setProduct(p);		
+		item.setSellingPrice(price);
+		return item;
 	}
 	private static List<OrderItemData> convert(List<OrderItemPojo>list)
 	{

@@ -27,6 +27,8 @@ public class InventoryService {
 		return getCheck(id);
 	}
 	
+	
+	
 	@Transactional
 	public InventoryPojo getCheck(int id) throws ApiException {
 		InventoryPojo p = dao.select(id);
@@ -44,6 +46,7 @@ public class InventoryService {
 	@Transactional(rollbackOn  = ApiException.class)
 	public void update(int id, InventoryPojo p) throws ApiException {
 		InventoryPojo ex = getCheck(id);
+		ex.setProduct(p.getProduct());
 		ex.setQuantity(p.getQuantity());
 		dao.update(ex);
 	}

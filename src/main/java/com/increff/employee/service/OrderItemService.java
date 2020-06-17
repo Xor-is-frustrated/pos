@@ -49,7 +49,7 @@ public class OrderItemService {
 	public void update(int id, OrderItemPojo p) throws ApiException {
 		OrderItemPojo ex = getCheck(id);
 		ex.setSellingPrice(p.getSellingPrice());
-		ex.setProductId(p.getProductId());
+		
 		ex.setQuantity(p.getQuantity());
 		ex.setOrderpojo(p.getOrderpojo());
 		dao.update(ex);

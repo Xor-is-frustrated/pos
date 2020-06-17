@@ -10,6 +10,7 @@ import com.increff.employee.model.InfoData;
 @Controller
 public abstract class AbstractUiController {
 
+	
 	@Autowired
 	private InfoData info;
 

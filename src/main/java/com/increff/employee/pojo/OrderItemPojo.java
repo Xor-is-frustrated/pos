@@ -13,13 +13,16 @@ public class OrderItemPojo {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
-	private int productId;
 	private int quantity;
 	private double sellingPrice;
 	
 	@ManyToOne
 	@JoinColumn(name = "order_id")
 	private OrderPojo orderpojo;
+	
+	@ManyToOne
+	@JoinColumn(name = "product_id")
+	private ProductPojo product;
 
 	public int getId() {
 		return id;
@@ -29,12 +32,12 @@ public class OrderItemPojo {
 		this.id = id;
 	}
 
-	public int getProductId() {
-		return productId;
+	public ProductPojo getProduct() {
+		return product;
 	}
 
-	public void setProductId(int productId) {
-		this.productId = productId;
+	public void setProduct(ProductPojo product) {
+		this.product = product;
 	}
 
 	public int getQuantity() {
