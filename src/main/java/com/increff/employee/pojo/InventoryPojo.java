@@ -13,7 +13,7 @@ public class InventoryPojo {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 	private int quantity;
-	
+
 	@OneToOne
 	private ProductPojo product;
 
@@ -40,5 +40,5 @@ public class InventoryPojo {
 	public void setProduct(ProductPojo product) {
 		this.product = product;
 	}
-	
+
 }

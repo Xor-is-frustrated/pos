@@ -9,9 +9,9 @@ public class AboutAppService {
 	@Value("${app.name}")
 	private String name;
 	@Value("${app.version}")
-	
+
 	private String version;
-	
+
 	public String getName() {
 		return name;
 	}

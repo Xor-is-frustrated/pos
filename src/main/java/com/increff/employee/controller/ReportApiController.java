@@ -1,21 +1,21 @@
 package com.increff.employee.controller;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
+import java.text.ParseException;
+import java.time.LocalDate;
 import java.util.List;
-import java.util.Set;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.increff.employee.model.BrandData;
 import com.increff.employee.model.InventoryReport;
+import com.increff.employee.model.ReportForm;
 import com.increff.employee.pojo.BrandPojo;
-import com.increff.employee.pojo.OrderItemPojo;
-import com.increff.employee.pojo.ProductPojo;
+import com.increff.employee.service.ApiException;
 import com.increff.employee.service.BrandService;
+import com.increff.employee.util.ControllerUtil;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -28,78 +28,22 @@ public class ReportApiController {
 	@Autowired
 	private BrandService brandservice;
 
-	@ApiOperation(value = "Gets inventory report")
-	@RequestMapping(path = "/api/inventoryreport", method = RequestMethod.GET)
-	public List<InventoryReport> getAll() {
+	@ApiOperation(value = "filters inventory report")
+	@RequestMapping(path = "/api/inventoryreport", method = RequestMethod.POST)
+	public List<InventoryReport> add(@RequestBody ReportForm form) throws ApiException, ParseException {
+		
+		//converting Date to local date format
+		LocalDate d1 = ControllerUtil.getLocalDate(form.getStartdate());
+		LocalDate d2 =  ControllerUtil.getLocalDate(form.getEnddate());
+
 		List<BrandPojo> list = brandservice.getAll();
-		return convert1(list);
+		List<String> category = form.getCategory();
+		List<String> brand = form.getBrand();
+		
+		//generating inventory report with brand, category and date filters
+		return ControllerUtil.convertToInventory(list, category, brand, d1, d2);
+
 	}
 
-	private static List<InventoryReport> convert1(List<BrandPojo> list) {
-		List<InventoryReport> list2 = new ArrayList<InventoryReport>();
-		for (BrandPojo pojo : list) {
-			InventoryReport inv = new InventoryReport();
-			inv.setBrand(pojo.getBrand());
-			inv.setCategory(pojo.getCategory());
-			int quantity = getQuantity(pojo.getProduct());
-			inv.setQuantity(quantity);
-			double revenue = getRevenue(pojo.getProduct());
-			inv.setRevenue(revenue);
-			list2.add(inv);
-		}
-		return list2;
-	}
-
-	private static int getQuantity(Set<ProductPojo> p) {
-		int quantity = 0;
-		for (ProductPojo pojo : p) {
-			if (pojo.getQuantity() != null) {
-				quantity = quantity + pojo.getQuantity().getQuantity();
-			}
-		}
-		return quantity;
-	}
-
-	private static double getRevenue(Set<ProductPojo> p) {
-		double revenue = 0;
-		for (ProductPojo pojo : p) {
-			revenue += getProductRevenue(pojo.getItem());
-		}
-		return revenue;
-	}
-
-	private static double getProductRevenue(Set<OrderItemPojo> p) {
-		double revenue = 0;
-		for (OrderItemPojo pojo : p) {
-			revenue += pojo.getSellingPrice();
-		}
-		return revenue;
-	}
-
-	public static List<BrandData> convert(List<BrandPojo> list) {
-		List<BrandData> list2 = new ArrayList<BrandData>();
-		for (BrandPojo p : list) {
-			list2.add(convert(p));
-		}
-		return list2;
-	}
-
-	private static BrandData convert(BrandPojo p) {
-		BrandData d = new BrandData();
-		d.setBrand(p.getBrand());
-		d.setCategory(p.getCategory());
-		d.setId(p.getId());
-
-		Set<ProductPojo> pojoset = p.getProduct();
-		Set<String> s = new HashSet<String>();
-		Iterator<ProductPojo> value = pojoset.iterator();
-		while (value.hasNext()) {
-			ProductPojo test = (ProductPojo) value.next();
-			s.add(test.getProduct());
-		}
-		d.setProduct(s);
-
-		return d;
-	}
-
+	
 }

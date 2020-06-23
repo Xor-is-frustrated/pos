@@ -110,8 +110,7 @@
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
         <button type="button" class="btn btn-primary" id="update-brand">Update</button>
-         &nbsp;
-		<button type="button" class="btn btn-primary" id="upload-data">Upload</button>
+        
       </div>
     </div>
   </div>
@@ -135,7 +134,7 @@
 		  <input type="file" class="custom-file-input" id="brandFile">
 		  <label class="custom-file-label" for="brandFile" id="brandFileName">Choose file</label>
 		</div>
-		<!-- <a th:href="@{/sample/employee.tsv}" target="_blank">Download Sample</a>  -->
+		<a th:href="@{/sample/brand.tsv}" target="_blank">Download Sample</a> 
 		<br>
 		Rows: <span id="rowCount">0</span>, 
 		Processed: <span id="processCount">0</span>, 
@@ -160,3 +159,60 @@
 </body>	
 
 </html>
+
+
+
+<!-- <!DOCTYPE html>
+<html>
+
+<head th:replace="snippets.html :: name_head"></head>
+<body>
+<nav th:replace="snippets.html :: name_app_navbar"></nav>
+
+<div class="container">
+
+<div class="row">
+
+ <div class="col-12">
+  <table class="table table-striped" id="inventoryreport-table">
+    <thead>
+      <tr>
+        <th scope="col">Brand</th>
+        <th scope="col">Category</th>
+        <th scope="col">Quantity</th>
+        <th scope="col">Revenue</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>brand</td>
+        <td>cate</td>
+        <td>30</td>
+        <td>10</td>
+      </tr>
+      
+    </tbody>
+  </table>
+
+</div>
+</div>
+<div class="dropdown">
+  <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    Dropdown button
+  </button>
+  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+    <a class="dropdown-item" href="#">Action</a>
+    <a class="dropdown-item" href="#">Another action</a>
+    <a class="dropdown-item" href="#">Something else here</a>
+  </div>
+</div>
+</div>
+<footer th:replace="snippets.html :: name_footer"></footer>
+
+<script th:src="@{/static/inventoryreport.js}"/></script>
+
+
+
+</body>
+</html>
+ -->

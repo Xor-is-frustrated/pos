@@ -21,3 +21,6 @@ body {
 .fas{
     font-size: 4rem;
 }
+
+.dropdown-toggle:after { content: none; }
+.dropdown-toggle:before { content: none; }

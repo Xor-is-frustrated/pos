@@ -1,6 +1,5 @@
 package com.increff.employee.controller;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +18,7 @@ import com.increff.employee.service.ApiException;
 import com.increff.employee.service.InventoryService;
 import com.increff.employee.service.OrderItemService;
 import com.increff.employee.service.ProductService;
+import com.increff.employee.util.ControllerUtil;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -28,108 +28,90 @@ import io.swagger.annotations.ApiOperation;
 public class OrderItemApiController {
 
 	@Autowired
-	private OrderItemService service;
-
+	private OrderItemService orderItemService;
 
 	@Autowired
-	private InventoryService inventoryservice;
-	
+	private InventoryService inventoryService;
+
 	@Autowired
 	private ProductService productservice;
 
-	@ApiOperation(value = "Adds a item")
+	@ApiOperation(value = "Adds an item")
 	@RequestMapping(path = "/api/orderitem", method = RequestMethod.POST)
 	public void add(@RequestBody OrderItemForm form) throws ApiException {
+
+		ProductPojo pojo = productservice.get(form.getBarcode());
+		OrderItemPojo p = ControllerUtil.convert(form, pojo);
 		
-		ProductPojo pojo=productservice.get(form.getBarcode());
-		OrderItemPojo p = convert(form, pojo);
-		int quantity=0;
-		if(pojo.getQuantity()==null)
-		{
-			throw new ApiException("quantity exceeds inventory quantity, please reduce the quantity to"+quantity);
-		}
-		quantity=pojo.getQuantity().getQuantity();
-		if( quantity <p.getQuantity())
-		{
-			throw new ApiException("quantity exceeds inventory quantity, please reduce the quantity"+quantity);
-		}
-		quantity-=p.getQuantity();
+		//reducing inventory quantity
+		int quantity = ControllerUtil.getQuantity(pojo, p);
+		quantity -= p.getQuantity();
+		
+		//updating inventory
 		InventoryPojo inv = pojo.getQuantity();
 		inv.setQuantity(quantity);
-		inventoryservice.update(inv.getId(), inv);
-		service.add(p);
-	}
- 
-	@ApiOperation(value = "Deletes a item")
-	@RequestMapping(path = "/api/orderitem/{id}", method = RequestMethod.DELETE)
-	public void delete(@PathVariable int id) throws ApiException {
-		service.delete(id);
+		inventoryService.update(inv.getId(), inv);
+		
+		//updating order item table
+		orderItemService.add(p);
 	}
 
-	@ApiOperation(value = "Gets a item by id")
+	@ApiOperation(value = "Deletes an item")
+	@RequestMapping(path = "/api/orderitem/{id}", method = RequestMethod.DELETE)
+	public void delete(@PathVariable int id) throws ApiException {
+		
+		OrderItemPojo p = orderItemService.get(id);
+		
+		//updating inventory quantity
+		InventoryPojo pojo=p.getProduct().getQuantity();
+		int quantity=p.getQuantity()+pojo.getQuantity();
+		pojo.setQuantity(quantity);
+		inventoryService.update(pojo.getId(), pojo);
+		
+		//deleting order item
+		orderItemService.delete(id);
+	}
+
+	@ApiOperation(value = "Gets an item by id")
 	@RequestMapping(path = "/api/orderitem/{id}", method = RequestMethod.GET)
 	public OrderItemData get(@PathVariable int id) throws ApiException {
-		OrderItemPojo p = service.get(id);
-		return convert(p);
+		OrderItemPojo p = orderItemService.get(id);
+		return ControllerUtil.convert(p);
+	}
+
+	@ApiOperation(value = "Gets list of all current items of this order")
+	@RequestMapping(path = "/api/orderitem", method = RequestMethod.GET)
+	public List<OrderItemData> getAll() {
+		List<OrderItemPojo> list = orderItemService.getCurrentItems();
+		return ControllerUtil.convertOrderItemPojo(list);
 	}
 
 	@ApiOperation(value = "Gets list of all items")
-	@RequestMapping(path = "/api/orderitem", method = RequestMethod.GET)
-	public List<OrderItemData> getAll() {
-		List<OrderItemPojo> list = service.getnull();
-		return convert(list);
+	@RequestMapping(path = "/api/orderitem/all", method = RequestMethod.GET)
+	public List<OrderItemData> getAllItems() {
+		List<OrderItemPojo> list = orderItemService.getAll();
+		return ControllerUtil.convertOrderItemPojo(list);
 	}
- 
+
 	@ApiOperation(value = "Updates a item")
 	@RequestMapping(path = "/api/orderitem/{id}", method = RequestMethod.PUT)
 	public void update(@PathVariable int id, @RequestBody OrderItemForm form) throws ApiException {
-		ProductPojo pojo=productservice.get(form.getBarcode());
-		OrderItemPojo p = convert(form, pojo);
-		int quantity= inventoryservice.get(id).getQuantity();
-		quantity-=p.getQuantity();
-		int quantity1=0;
-		if(pojo.getQuantity()==null)
-		{
-			throw new ApiException("quantity exceeds inventory quantity, please reduce the quantity to"+quantity1);
-		}
-		quantity1=pojo.getQuantity().getQuantity();
-		if( quantity <p.getQuantity())
-		{
-			throw new ApiException("quantity exceeds inventory quantity, please reduce the quantity"+quantity1);
-		}
-		quantity1-=quantity;
+		ProductPojo pojo = productservice.get(form.getBarcode());
+		OrderItemPojo p = ControllerUtil.convert(form, pojo);
+		
+		//changing the quantity with updated quantity
+		int quantity = inventoryService.get(pojo.getId()).getQuantity()-p.getQuantity();
+		int quantity1 = ControllerUtil.getQuantity(pojo,p);
+		quantity1 -= quantity;
+		
+		//updating inventory
 		InventoryPojo inv = pojo.getQuantity();
 		inv.setQuantity(quantity1);
-		inventoryservice.update(inv.getId(), inv);
-		service.update(id, p);
-	}
-	
-	private static OrderItemData convert(OrderItemPojo p) {
-		OrderItemData d = new OrderItemData();
-		d.setBarcode(p.getProduct().getBarcode());
-		d.setSellingprice(p.getSellingPrice());
-		d.setId(p.getId());
-		d.setProduct(p.getProduct().getProduct());
-		d.setQuantity(p.getQuantity());
-		d.setMrp(p.getProduct().getMrp());
-		return d;
-	}
-	
-	private static OrderItemPojo convert(OrderItemForm f, ProductPojo p) {
-		OrderItemPojo item = new OrderItemPojo();
-		double price=p.getMrp()*f.getQuantity();
+		inventoryService.update(inv.getId(), inv);
 		
-		item.setQuantity(f.getQuantity());
-		item.setProduct(p);		
-		item.setSellingPrice(price);
-		return item;
+		
+		//updating order item table
+		orderItemService.update(id, p);
 	}
-	private static List<OrderItemData> convert(List<OrderItemPojo>list)
-	{
-		List<OrderItemData> list2 = new ArrayList<OrderItemData>();
-		for (OrderItemPojo p : list) {
-			list2.add(convert(p));
-		}
-		return list2;
+
 	}
-}

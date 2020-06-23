@@ -92,12 +92,20 @@ function processData(){
 
 function readFileDataCallback(results){
 	fileData = results.data;
+	console.log("the length is");
+	console.log(fileData.length);
+	
 	uploadRows();
 }
 
 function uploadRows(){
 	//Update progress
 	updateUploadDialog();
+	if(fileData.length>10)
+	{
+		alert("more than 10 columns");
+		return ;
+	}
 	//If everything processed then return
 	if(processCount==fileData.length){
 		return;

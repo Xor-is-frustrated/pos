@@ -41,15 +41,15 @@ public class OrderItemService {
 	}
 
 	@Transactional
-	public List<OrderItemPojo> getnull() {
-		return dao.selectnull();
+	public List<OrderItemPojo> getCurrentItems() {
+		return dao.selectCurrentItems();
 	}
 
 	@Transactional(rollbackOn = ApiException.class)
 	public void update(int id, OrderItemPojo p) throws ApiException {
 		OrderItemPojo ex = getCheck(id);
 		ex.setSellingPrice(p.getSellingPrice());
-		
+
 		ex.setQuantity(p.getQuantity());
 		ex.setOrderpojo(p.getOrderpojo());
 		dao.update(ex);

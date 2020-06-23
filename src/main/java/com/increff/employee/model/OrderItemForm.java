@@ -5,7 +5,6 @@ public class OrderItemForm {
 	private String barcode;
 	private int quantity;
 
-
 	public String getBarcode() {
 		return barcode;
 	}

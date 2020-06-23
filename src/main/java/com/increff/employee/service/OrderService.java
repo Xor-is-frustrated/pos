@@ -27,8 +27,8 @@ public class OrderService {
 	}
 
 	@Transactional(rollbackOn = ApiException.class)
-	public OrderPojo getsize() throws ApiException {
-		OrderPojo p = dao.selectsize();
+	public OrderPojo getCurrentOrder() throws ApiException {
+		OrderPojo p = dao.selectCurrentOrder();
 		if (p == null) {
 			throw new ApiException("new order does not exist");
 		}

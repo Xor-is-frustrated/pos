@@ -15,11 +15,11 @@ public class OrderItemPojo {
 	private int id;
 	private int quantity;
 	private double sellingPrice;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "order_id")
 	private OrderPojo orderpojo;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "product_id")
 	private ProductPojo product;
@@ -64,7 +64,4 @@ public class OrderItemPojo {
 		this.orderpojo = orderpojo;
 	}
 
-	
-	
-	
 }

@@ -13,10 +13,10 @@ import com.increff.employee.pojo.OrderItemPojo;
 @Repository
 public class OrderItemDao extends AbstractDao {
 
-	private static String delete_id = "delete from OrderItemPojo p where id=:id";
-	private static String select_id = "select p from OrderItemPojo p where id=:id";
-	private static String select_all = "select p from OrderItemPojo p";
-	private static String select_null = "select p from OrderItemPojo p where p.orderpojo is NULL";
+	private static String deleteId = "delete from OrderItemPojo p where id=:id";
+	private static String selectId = "select p from OrderItemPojo p where id=:id";
+	private static String selectAll = "select p from OrderItemPojo p";
+	private static String selectCurrentItems = "select p from OrderItemPojo p where p.orderpojo is NULL";
 
 	@Transactional
 	public void insert(OrderItemPojo b) {
@@ -24,23 +24,23 @@ public class OrderItemDao extends AbstractDao {
 	}
 
 	public int delete(int id) {
-		Query query = em().createQuery(delete_id);
+		Query query = em().createQuery(deleteId);
 		query.setParameter("id", id);
 		return query.executeUpdate();
 	}
 
 	public List<OrderItemPojo> selectAll() {
-		TypedQuery<OrderItemPojo> query = getQuery(select_all, OrderItemPojo.class);
+		TypedQuery<OrderItemPojo> query = getQuery(selectAll, OrderItemPojo.class);
 		return query.getResultList();
 	}
 
-	public List<OrderItemPojo> selectnull() {
-		TypedQuery<OrderItemPojo> query = getQuery(select_null, OrderItemPojo.class);
+	public List<OrderItemPojo> selectCurrentItems() {
+		TypedQuery<OrderItemPojo> query = getQuery(selectCurrentItems, OrderItemPojo.class);
 		return query.getResultList();
 	}
 
 	public OrderItemPojo select(int id) {
-		TypedQuery<OrderItemPojo> query = getQuery(select_id, OrderItemPojo.class);
+		TypedQuery<OrderItemPojo> query = getQuery(selectId, OrderItemPojo.class);
 		query.setParameter("id", id);
 		return getSingle(query);
 	}

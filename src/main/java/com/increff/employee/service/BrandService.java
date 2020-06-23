@@ -15,30 +15,27 @@ public class BrandService {
 
 	@Autowired
 	private BrandDao dao;
-	
+
 	@Transactional
-	public void add(BrandPojo p) throws ApiException
-	{
+	public void add(BrandPojo p) throws ApiException {
 		normalize(p);
-		BrandPojo existing=dao.select(p.getBrand(),p.getCategory());
-		if(existing!=null)
-		{
+		BrandPojo existing = dao.select(p.getBrand(), p.getCategory());
+		if (existing != null) {
 			throw new ApiException("Brand category combination already exists");
 		}
 		dao.insert(p);
 	}
-	
+
 	@Transactional(rollbackOn = ApiException.class)
 	public BrandPojo get(String brand) throws ApiException {
 		return getCheck(brand);
-		
 	}
-	
+
 	@Transactional(rollbackOn = ApiException.class)
 	public BrandPojo get(int id) throws ApiException {
 		return getCheck(id);
 	}
-	
+
 	@Transactional
 	public BrandPojo getCheck(int id) throws ApiException {
 		BrandPojo p = dao.select(id);
@@ -47,7 +44,7 @@ public class BrandService {
 		}
 		return p;
 	}
-	
+
 	@Transactional
 	public BrandPojo getCheck(String brand) throws ApiException {
 		BrandPojo p = dao.select(brand);
@@ -61,30 +58,28 @@ public class BrandService {
 	public List<BrandPojo> getAll() {
 		return dao.selectAll();
 	}
-	
+
 	@Transactional
 	public List<BrandPojo> getCategories() {
 		return dao.selectCategories();
 	}
-	
+
 	@Transactional
 	public List<BrandPojo> getBrands() {
 		return dao.selectBrands();
 	}
-	
+
 	@Transactional
 	public List<BrandPojo> getDistinctCategories(String category) {
 		return dao.selectDistinctCategories(category);
 	}
-	
+
 	@Transactional
 	public List<BrandPojo> getDistinctBrands(String brand) {
 		return dao.selectDistinctBrands(brand);
 	}
-	
-	
-	
-	@Transactional(rollbackOn  = ApiException.class)
+
+	@Transactional(rollbackOn = ApiException.class)
 	public void update(int id, BrandPojo p) throws ApiException {
 		normalize(p);
 		BrandPojo ex = getCheck(id);
@@ -94,7 +89,7 @@ public class BrandService {
 		dao.update(ex);
 	}
 
-	@Transactional(rollbackOn  = ApiException.class)
+	@Transactional(rollbackOn = ApiException.class)
 	public void delete(int id) throws ApiException {
 		dao.delete(id);
 	}
@@ -103,5 +98,5 @@ public class BrandService {
 		p.setBrand(p.getBrand().toLowerCase().trim());
 		p.setCategory(p.getCategory().toLowerCase().trim());
 	}
-	
+
 }

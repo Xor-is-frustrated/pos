@@ -7,23 +7,29 @@ function getOrderUrl(){
 
 //BUTTON ACTIONS
 
-function purchaseOrder(event)
-{
-	var baseUrl = $("meta[name=baseUrl]").attr("content");
 
-	var url = baseUrl+"/api/order";
-	$.ajax({
-	   url: url,
-	   type: 'POST',
-	   headers: {
-       	'Content-Type': 'application/json'
-       },
-	   success: function(data) {
-	   		alert("order purchased");
-	   		getOrderList();  
-	   },
-	   error: handleAjaxError
-	});
+
+function purchase(event)
+{
+var baseUrl = $("meta[name=baseUrl]").attr("content");
+
+	var url = baseUrl+"/api/order/test";
+	 var req = new XMLHttpRequest();
+	  req.open("GET", url, true);
+	  req.responseType = "blob";
+
+	  req.onload = function (event) {
+	    var blob = req.response;
+	    console.log(blob.size);
+	    var link=document.createElement('a');
+	    link.href=window.URL.createObjectURL(blob);
+	    link.download="Receipt.pdf";
+	    link.click();
+	    getOrderList();
+	  };
+
+	  req.send();
+
 }
 
 function addOrder(event){
@@ -237,10 +243,11 @@ function init(){
 	$('#update-order').click(updateOrder);
 	$('#refresh-data').click(getOrderList);
 	$('#upload-data').click(displayUploadData);
-	$('#order-purchase').click(purchaseOrder);
+	$('#purchase').click(purchase);
 	$('#process-data').click(processData);
 	$('#download-errors').click(downloadErrors);
     $('#orderFile').on('change', updateFileName);
+    
   
   }
 

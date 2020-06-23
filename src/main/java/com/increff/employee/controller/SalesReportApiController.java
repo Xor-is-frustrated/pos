@@ -1,19 +1,22 @@
 package com.increff.employee.controller;
 
+import java.text.ParseException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.increff.employee.model.ReportForm;
 import com.increff.employee.model.SalesReport;
 import com.increff.employee.pojo.BrandPojo;
-import com.increff.employee.pojo.OrderItemPojo;
-import com.increff.employee.pojo.ProductPojo;
+import com.increff.employee.service.ApiException;
 import com.increff.employee.service.BrandService;
+import com.increff.employee.util.ControllerUtil;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -23,50 +26,43 @@ import io.swagger.annotations.ApiOperation;
 public class SalesReportApiController {
 
 	@Autowired
-	private BrandService brandservice;
+	private BrandService brandService;
 
-	@ApiOperation(value = "Gets inventory report")
-	@RequestMapping(path = "/api/salesreport", method = RequestMethod.GET)
-	public List<SalesReport> getAll() {
-		List<BrandPojo> list = brandservice.getCategories();
+	@ApiOperation(value = "filters sales report")
+	@RequestMapping(path = "/api/salesreport", method = RequestMethod.POST)
+	public List<SalesReport> add(@RequestBody ReportForm form) throws ApiException, ParseException {
+
+		// converting Date to local date format
+		LocalDate d1 = ControllerUtil.getLocalDate(form.getStartdate());
+		LocalDate d2 = ControllerUtil.getLocalDate(form.getEnddate());
+
+		List<String> category = form.getCategory();
+		List<String> brand = form.getBrand();
+
+		// retrieving all distinct categories
+		List<BrandPojo> list = brandService.getCategories();
 		List<SalesReport> sales = new ArrayList<SalesReport>();
 		for (BrandPojo p : list) {
-			String category = p.getCategory();
-			List<BrandPojo> pojo = brandservice.getDistinctCategories(category);
+			String category_name = p.getCategory();
+
+			// selected category is not in the choosen list
+			if (!category.contains(category_name)) {
+				continue;
+			}
+
+			// retrieving all category items of the selected category
+			List<BrandPojo> pojo = brandService.getDistinctCategories(category_name);
 
 			SalesReport report = new SalesReport();
-			report.setCategory(category);
-			report.setRevenue(getRevenue(pojo));
+			report.setCategory(category_name);
+
+			// calculates revenue of selected brands and categories in selected time frame
+			report.setRevenue(ControllerUtil.getInitialRevenue(pojo, brand, d1, d2));
 
 			sales.add(report);
+
 		}
 		return sales;
 	}
-
-	private static double getRevenue(List<BrandPojo> list) {
-		double revenue = 0;
-		for (BrandPojo pojo : list) {
-			revenue += getRevenue(pojo.getProduct());
-		}
-		return revenue;
-	}
-
-	private static double getRevenue(Set<ProductPojo> p) {
-		double revenue = 0;
-		for (ProductPojo pojo : p) {
-			revenue += getProductRevenue(pojo.getItem());
-		}
-		return revenue;
-	}
-
-	private static double getProductRevenue(Set<OrderItemPojo> p) {
-		double revenue = 0;
-		for (OrderItemPojo pojo : p) {
-			revenue += pojo.getSellingPrice();
-		}
-		return revenue;
-	}
-
-
 
 }

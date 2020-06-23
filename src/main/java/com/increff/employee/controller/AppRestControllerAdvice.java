@@ -12,7 +12,7 @@ import com.increff.employee.service.ApiException;
 public class AppRestControllerAdvice {
 
 	@ExceptionHandler(ApiException.class)
-	
+
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	public MessageData handle(ApiException e) {
 		MessageData data = new MessageData();

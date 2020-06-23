@@ -21,17 +21,16 @@ public class ProductPojo {
 	private String product;
 	private double mrp;
 	private String barcode;
-	
+
 	@ManyToOne
-	@JoinColumn(name="brand_product")
+	@JoinColumn(name = "brand_product")
 	private BrandPojo brand;
-	
-	@OneToOne(mappedBy="product",fetch = FetchType.EAGER)
+
+	@OneToOne(mappedBy = "product", fetch = FetchType.EAGER)
 	private InventoryPojo quantity;
-	
-	@OneToMany(mappedBy = "product",fetch = FetchType.EAGER)
+
+	@OneToMany(mappedBy = "product", fetch = FetchType.EAGER)
 	private Set<OrderItemPojo> item;
-		
 
 	public Set<OrderItemPojo> getItem() {
 		return item;
@@ -89,7 +88,4 @@ public class ProductPojo {
 		this.brand = brand;
 	}
 
-	
-	
-	
 }

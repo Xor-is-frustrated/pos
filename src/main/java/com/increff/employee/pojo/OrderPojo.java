@@ -17,8 +17,8 @@ public class OrderPojo {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 	private LocalDateTime datetime;
-	
-	@OneToMany(mappedBy = "orderpojo",fetch = FetchType.EAGER)
+
+	@OneToMany(mappedBy = "orderpojo", fetch = FetchType.EAGER)
 	private Set<OrderItemPojo> orderitem;
 
 	public int getId() {
@@ -45,8 +45,4 @@ public class OrderPojo {
 		this.orderitem = orderitem;
 	}
 
-
-	
-	
-	
 }

@@ -22,6 +22,7 @@ import com.increff.employee.service.BrandService;
 import com.increff.employee.service.InventoryService;
 import com.increff.employee.service.OrderItemService;
 import com.increff.employee.service.ProductService;
+import com.increff.employee.util.ControllerUtil;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -31,59 +32,58 @@ import io.swagger.annotations.ApiOperation;
 public class ProductApiController {
 
 	@Autowired
-	private ProductService service;
-
+	private ProductService productService;
 	@Autowired
-	private BrandService brandservice;
-
+	private BrandService brandService;
 	@Autowired
-	private InventoryService inventoryservice;
-	
+	private InventoryService inventoryService;
 	@Autowired
-	private OrderItemService orderitemservice;
+	private OrderItemService orderItemService;
 
 	@ApiOperation(value = "Adds a product")
 	@RequestMapping(path = "/api/product", method = RequestMethod.POST)
 	public void add(@RequestBody ProductForm form) throws ApiException {
 
-		BrandPojo b = brandservice.get(form.getBrand());
-		ProductPojo p = convert(form, b);
-		service.add(p);
-
+		BrandPojo b = brandService.get(form.getBrand());
+		ProductPojo p = ControllerUtil.convert(form, b);
+		productService.add(p);
 	}
 
 	@ApiOperation(value = "Deletes a product")
 	@RequestMapping(path = "/api/product/{id}", method = RequestMethod.DELETE)
 	public void delete(@PathVariable int id) throws ApiException {
-		ProductPojo p=service.get(id);
+		ProductPojo p = productService.get(id);
 		InventoryPojo ip = p.getQuantity();
-		Set<OrderItemPojo> item=p.getItem();
+		
+		//deleting the child entities, if exists
+		Set<OrderItemPojo> item = p.getItem();
 		if (ip != null) {
-			inventoryservice.delete(ip.getId());
+			inventoryService.delete(ip.getId());
 		}
-		if(item!=null)
-		{
-			for(OrderItemPojo pojo:item) {
-				orderitemservice.delete(pojo.getId());
+		if (item != null) {
+			for (OrderItemPojo pojo : item) {
+				orderItemService.delete(pojo.getId());
 			}
 		}
-		service.delete(id);
+		
+		//deleting the product
+		productService.delete(id);
 	}
 
 	@ApiOperation(value = "Gets a product by id")
 	@RequestMapping(path = "/api/product/{id}", method = RequestMethod.GET)
 	public ProductData get(@PathVariable int id) throws ApiException {
-		ProductPojo p = service.get(id);
-		return convert(p);
+		ProductPojo p = productService.get(id);
+		return ControllerUtil.convert(p);
 	}
 
 	@ApiOperation(value = "Gets list of all products")
 	@RequestMapping(path = "/api/product", method = RequestMethod.GET)
 	public List<ProductData> getAll() {
-		List<ProductPojo> list = service.getAll();
+		List<ProductPojo> list = productService.getAll();
 		List<ProductData> list2 = new ArrayList<ProductData>();
 		for (ProductPojo p : list) {
-			list2.add(convert(p));
+			list2.add(ControllerUtil.convert(p));
 		}
 		return list2;
 	}
@@ -92,45 +92,24 @@ public class ProductApiController {
 	@RequestMapping(path = "/api/product/{id}", method = RequestMethod.PUT)
 	public void update(@PathVariable int id, @RequestBody ProductForm form) throws ApiException {
 
-		BrandPojo b = brandservice.get(form.getBrand());
-
+		BrandPojo b = brandService.get(form.getBrand());
 		if (b == null) {
 			throw new ApiException("Brand with given brand_name does not exist, brand: " + form.getBrand());
 		}
-		ProductPojo p = convert(form, b);
-		ProductPojo p1 = service.get(id);
 		
-		p.setQuantity(p1.getQuantity());
-		service.update(id, p);
-
-
-	}
-
-	private static ProductData convert(ProductPojo p) {
-		ProductData d = new ProductData();
-		d.setBrand(p.getBrand().getId());
-		d.setMrp(p.getMrp());
-		d.setId(p.getId());
-		d.setBarcode(p.getBarcode());
-		d.setProduct(p.getProduct());
-		InventoryPojo inv = p.getQuantity();
-		int val = 0;
-		if (inv != null) {
-			val = inv.getQuantity();
+		ProductPojo pojo=productService.get(form.getBarcode());
+		
+		if(pojo!=null) {
+			if(id!=pojo.getId()) {
+				throw new ApiException("The given barcode already exists for another product: " + form.getBrand());
+			}
 		}
-		d.setQuantity(val);
-		return d;
-	}
+		
+		ProductPojo p = ControllerUtil.convert(form, b);
+		ProductPojo p1 = productService.get(id);
+		p.setQuantity(p1.getQuantity());
+		productService.update(id, p);
 
-	private static ProductPojo convert(ProductForm f, BrandPojo b) throws ApiException {
-
-		ProductPojo p = new ProductPojo();
-		p.setProduct(f.getProduct());
-		p.setBrand(b);
-		p.setMrp(f.getMrp());
-		p.setBarcode(f.getBarcode());
-
-		return p;
 	}
 
 }

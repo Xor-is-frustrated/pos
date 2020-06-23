@@ -4,7 +4,7 @@ public class BrandForm {
 
 	private String brand;
 	private String category;
-	
+
 	public String getBrand() {
 		return brand;
 	}
