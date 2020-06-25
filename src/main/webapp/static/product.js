@@ -155,8 +155,14 @@ function processData(){
 
 function readFileDataCallback(results){
 	fileData = results.data;
-	console.log("the length is");
+	console.log("readFileDataCallback");
+	console.log("the length of  the file is");
 	console.log(fileData.length);
+	if(fileData.length>5000)
+	{
+		alert("the tsv file is too big, please reduce the number of rows to less than 5");
+		return ;
+	}
 	
 	uploadRows();
 }

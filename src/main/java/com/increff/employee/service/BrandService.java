@@ -82,6 +82,10 @@ public class BrandService {
 	@Transactional(rollbackOn = ApiException.class)
 	public void update(int id, BrandPojo p) throws ApiException {
 		normalize(p);
+		BrandPojo existing = dao.select(p.getBrand(), p.getCategory());
+		if (existing != null && existing.getId()!=id) {
+			throw new ApiException("Brand category combination already exists");
+		}
 		BrandPojo ex = getCheck(id);
 		ex.setBrand(p.getBrand());
 		ex.setCategory(p.getCategory());

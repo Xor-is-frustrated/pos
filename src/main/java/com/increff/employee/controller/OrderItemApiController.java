@@ -42,33 +42,33 @@ public class OrderItemApiController {
 
 		ProductPojo pojo = productservice.get(form.getBarcode());
 		OrderItemPojo p = ControllerUtil.convert(form, pojo);
-		
-		//reducing inventory quantity
+
+		// reducing inventory quantity
 		int quantity = ControllerUtil.getQuantity(pojo, p);
 		quantity -= p.getQuantity();
-		
-		//updating inventory
+
+		// updating inventory
 		InventoryPojo inv = pojo.getQuantity();
 		inv.setQuantity(quantity);
 		inventoryService.update(inv.getId(), inv);
-		
-		//updating order item table
+
+		// updating order item table
 		orderItemService.add(p);
 	}
 
 	@ApiOperation(value = "Deletes an item")
 	@RequestMapping(path = "/api/orderitem/{id}", method = RequestMethod.DELETE)
 	public void delete(@PathVariable int id) throws ApiException {
-		
+
 		OrderItemPojo p = orderItemService.get(id);
-		
-		//updating inventory quantity
-		InventoryPojo pojo=p.getProduct().getQuantity();
-		int quantity=p.getQuantity()+pojo.getQuantity();
+
+		// updating inventory quantity
+		InventoryPojo pojo = p.getProduct().getQuantity();
+		int quantity = p.getQuantity() + pojo.getQuantity();
 		pojo.setQuantity(quantity);
 		inventoryService.update(pojo.getId(), pojo);
-		
-		//deleting order item
+
+		// deleting order item
 		orderItemService.delete(id);
 	}
 
@@ -98,20 +98,18 @@ public class OrderItemApiController {
 	public void update(@PathVariable int id, @RequestBody OrderItemForm form) throws ApiException {
 		ProductPojo pojo = productservice.get(form.getBarcode());
 		OrderItemPojo p = ControllerUtil.convert(form, pojo);
+		int itemPreviousQuantity= orderItemService.get(id).getQuantity();
 		
-		//changing the quantity with updated quantity
-		int quantity = inventoryService.get(pojo.getId()).getQuantity()-p.getQuantity();
-		int quantity1 = ControllerUtil.getQuantity(pojo,p);
-		quantity1 -= quantity;
-		
-		//updating inventory
+		//checking and changing inventory quantity
+		int inventoryQuantity = ControllerUtil.getQuantity(pojo, p, itemPreviousQuantity);
+
+		// updating inventory
 		InventoryPojo inv = pojo.getQuantity();
-		inv.setQuantity(quantity1);
+		inv.setQuantity(inventoryQuantity);
 		inventoryService.update(inv.getId(), inv);
-		
-		
-		//updating order item table
+
+		// updating order item table
 		orderItemService.update(id, p);
 	}
 
-	}
+}

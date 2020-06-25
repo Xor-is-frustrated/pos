@@ -290,6 +290,22 @@ public class ControllerUtil {
 		
 		return quantity;
 	}
+	
+public static int getQuantity(ProductPojo pojo, OrderItemPojo p, int itemPreviousQuantity) throws ApiException {
+		
+		int inventoryQuantity = pojo.getQuantity().getQuantity();
+		int itemUpdatedQuantity = p.getQuantity();
+
+		inventoryQuantity += itemPreviousQuantity;
+		inventoryQuantity -= itemUpdatedQuantity;
+
+		if (inventoryQuantity < 0) {
+			throw new ApiException("quantity exceeds inventory quantity. Please reduce the quantity to "
+					+ (inventoryQuantity + itemUpdatedQuantity));
+		}
+		return inventoryQuantity;
+	}
+
 
 	public static LocalDate getLocalDate(Date date)
 	{

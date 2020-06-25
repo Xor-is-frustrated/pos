@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Invoice id="0">
+    <items>
+        <quantity>13</quantity>
+        <id>0</id>
+        <mrp>12.0</mrp>
+        <product>kitkat</product>
+        <sellingprice>156.0</sellingprice>
+    </items>
+    <sellingprice>156.0</sellingprice>
+</Invoice>

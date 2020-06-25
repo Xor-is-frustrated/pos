@@ -4,13 +4,13 @@ function getBrandUrl(){
 }
 
 
-function preprocessData(){
-	console.log("fuck");
-	var file = $('#brandFile')[0].files[0];
-	var myFile = $('#brandFile').prop('files');
-	console.log(myFile);
+// function preprocessData(){
+// 	console.log("fuck");
+// 	var file = $('#brandFile')[0].files[0];
+// 	var myFile = $('#brandFile').prop('files');
+// 	console.log(myFile);
 	
-}
+// }
 
 function processData(){
 	console.log("processdata");
@@ -21,16 +21,21 @@ function processData(){
 function readFileDataCallback(results){
 	fileData = results.data;
 	console.log("readFileDataCallback");
-	console.log("the length is");
+	console.log("the length of  the file is");
 	console.log(fileData.length);
+	if(fileData.length>5000)
+	{
+		alert("the tsv file is too big, please reduce the number of rows to less than 5");
+		return ;
+	}
+
 	uploadRows();
 }
 
 function uploadRows(){
 	//Update progress
 	updateUploadDialog();
-	console.log("uploadRows");
-	console.log(fileData.length);
+	
 	//If everything processed then return
 	if(processCount==fileData.length){
 		return;
@@ -213,7 +218,7 @@ function init(){
 	$('#update-brand').click(updateBrand);
 	$('#refresh-data').click(getBrandList);
 	$('#upload-data').click(displayUploadData);
-	$('#process-data').click(preprocessData);
+	$('#process-data').click(processData);
 	$('#download-errors').click(downloadErrors);
     $('#brandFile').on('change', updateFileName)
 }
