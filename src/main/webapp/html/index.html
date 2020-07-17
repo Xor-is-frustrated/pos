@@ -1,25 +1,21 @@
 <!doctype html>
-
 <html lang="en">
-
 <head th:replace="snippets.html :: name_head"></head>
-
 <body>
+	<nav th:replace="snippets.html :: name_app_navbar"></nav>
 
-<nav th:replace="snippets.html :: name_site_navbar"></nav>
+	<div class="container-fluid">
+		
+		<div class="row">
+			<div class="col-12 index-row" style="text-align: center;">
+				<p id="heading" >Welcome to PoS Demo Project</p>
+				<a class="btn btn-dark btn-lg" href="/pos/ui/order" role="button">Scan Items</a>
+			</div>
+		</div>
+	</div>
 
-<div class="container" style="min-height: 800px;">
-<div class="row"style="min-height: 700px;">
-<div class="col-12" style="min-height: 600px;padding-top:20%;">
-  <p style="text-align: center;font-family:sans-serif; font-size:20px;  ">Welcome to PoS Demo Project</p>
-  <a class="btn btn-primary btn-lg" href="/employee/ui/order" style="margin-left:45%;" role="button">Get Started</a>
-</div>
 
-</div>
-</div>
-</div> <!--Container-->
-
-<footer th:replace="snippets.html :: name_footer"></footer>
+	<footer th:replace="snippets.html :: name_footer"></footer>
 
 </body>
 

@@ -1,93 +1,98 @@
 <!DOCTYPE html>
 <html>
-  <head th:replace="snippets.html :: name_head"></head>
+<head th:replace="snippets.html :: name_head"></head>
 <body>
 
   <nav th:replace="snippets.html :: name_app_navbar"></nav>
+<br>
+  <div class="container">
 
-  <br /><br />
-<div class="container">
-
-
-<div class="container" >
-  <div class="row">
-    <div class="col-sm-6">
-     <form method="post" id="category_form" >
+    <div class="container" >
+      <h4>Sales Report</h4>
+      <br> 
+      <div class="row">
+        <div class="col-sm-6">
+         <form method="post" id="category_form" >
+          <div class="form-group">
+           <label class="col-form-label" style="min-width: 100px;">Category</label>
+           &nbsp;
+           <select id="category-dropdown" name="categories"  multiple class="form-control dropdown-toggle" ></select>
+         
+       </div>
+     </form>
+   </div>
+   <div class="col-sm-6">
+    <form method="post" id="brand_form" >
       <div class="form-group">
-       <label>category </label>
-       
-       <select id="category-dropdown" name="category"  multiple class="form-control dropdown-toggle" ></select>
-       
-     </button>
+        <label class="col-form-label" style="min-width: 100px;">Brand</label>
+        &nbsp;
+       <select id="brand-dropdown" name="brands" multiple class="form-control" >
+       </select>
      </div>
    </form>
  </div>
- <div class="col-sm-6">
-  <form method="post" id="brand_form" >
-    <div class="form-group">
-     <label>brand </label>
-     <select id="brand-dropdown" name="brand" multiple class="form-control" >
-     </select>
-   </div>
- </form>
-</div>
 </div>
 <div class="row">
   <div class="col-sm-6">
     <form method="post" id="startdate_form">
       <div class="form-group">
-        <label>Start date </label>
-        <input type="date" id="startdate_dropdown" name="startdate" max="2014-07-11" value="2000-01-01">
+        <label class="col-form-label" style="min-width: 100px;">Start Date</label>
+        &nbsp;
+        <input type="date" id="startdate_dropdown" name="startDate" max="2014-07-11" value="2000-01-01">
       </div>
     </form>
   </div>
   <div class="col-sm-6">
    <form method="post" id="enddate_form">
     <div class="form-group">
-      <label>End date </label>
-      <input type="date" id="enddate_dropdown" name="enddate" max="2014-07-11" value="2040-06-19">
+      <label class="col-form-label" style="min-width: 100px;">End Date</label>
+      &nbsp;
+      <input type="date" id="enddate_dropdown" name="endDate" max="2014-07-11" value="2040-06-19">
     </div>
   </form>
 </div>
 </div>
 <div class="form-group">
-  <button type="button" class="btn btn-primary" id="apply-dropdown">Apply</button>
+  <button type="button" class="btn btn-dark" id="apply-dropdown">Apply</button>
 </div>
 </div>
-
-
-
-
+<div class="modal" id="error-alert" role="dialog">
+    <div class="modal-dialog error-modal">
+    
+      <!-- Modal content-->
+      <div class="modal-content" style="background-color: red">
+        <div class="modal-header">
+          <h6 class="modal-title">Error</h6>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          
+        </div>
+        <div class="modal-body">
+          <p id="error-message"></p>
+        </div>
+        
+      </div>
+      
+    </div>
+  </div>
 <div class="row">
-
  <div class="col-12">
   <table class="table table-striped" id="inventoryreport-table">
     <thead>
       <tr>
-        
         <th scope="col">Category</th>
-       
         <th scope="col">Revenue</th>
       </tr>
     </thead>
     <tbody>
-      <tr>
-        
-        <td>cate</td>
-       
-        <td>10</td>
-      </tr>
-      
     </tbody>
   </table>
-
 </div>
 </div>
 </div>
-
+<footer th:replace="snippets.html :: name_footer"></footer>
 <script th:src="@{/static/salesreport.js}"/></script>
-<script th:src="@{/static/app.js}"/></script>
-<script th:src="@{/static/papaparse.min.js}"/></script>
+<!-- <script th:src="@{/static/app.js}"/></script>
+<script th:src="@{/static/papaparse.min.js}"/></script> -->
 </body>
 </html>
 

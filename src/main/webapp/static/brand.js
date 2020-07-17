@@ -2,20 +2,26 @@ function getBrandUrl(){
 	var baseUrl = $("meta[name=baseUrl]").attr("content")
 	return baseUrl + "/api/brand";
 }
-
-
-// function preprocessData(){
-// 	console.log("fuck");
-// 	var file = $('#brandFile')[0].files[0];
-// 	var myFile = $('#brandFile').prop('files');
-// 	console.log(myFile);
-	
-// }
+// FILE UPLOAD METHODS
+var fileData = [];
+var errorData = [];
+var processCount = 0;
+var successCount =0;
+var brandName="";
+var categoryName="";
 
 function processData(){
+	
 	console.log("processdata");
+	$('#process-data').prop('disabled',true);
 	var file = $('#brandFile')[0].files[0];
+	processCount = 0;
+	successCount=0;
+	fileData = [];
+	errorData = [];
 	readFileData(file, readFileDataCallback);
+	
+
 }
 
 function readFileDataCallback(results){
@@ -23,9 +29,8 @@ function readFileDataCallback(results){
 	console.log("readFileDataCallback");
 	console.log("the length of  the file is");
 	console.log(fileData.length);
-	if(fileData.length>5000)
-	{
-		alert("the tsv file is too big, please reduce the number of rows to less than 5");
+	if(fileData.length>5000){
+		alert("row limit is 5000");
 		return ;
 	}
 
@@ -38,7 +43,20 @@ function uploadRows(){
 	
 	//If everything processed then return
 	if(processCount==fileData.length){
+		getBrandList();
+		var $file = $('#brandFile');
+			$file.val('');
+			$('#brandFileName').html("Choose File");
+		if(errorData.length>0){
+			$("#download-errors").prop('disabled', false);
+		}
+		else{
+			$("#download-errors").prop('disabled', true);
+			
+		}
+
 		return;
+		
 	}
 	
 	//Process next row
@@ -50,20 +68,23 @@ function uploadRows(){
 
 	//Make ajax call
 	$.ajax({
-	   url: url,
-	   type: 'POST',
-	   data: json,
-	   headers: {
-       	'Content-Type': 'application/json'
-       },	   
-	   success: function(response) {
-	   		uploadRows();  
-	   },
-	   error: function(response){
-	   		row.error=response.responseText
-	   		errorData.push(row);
-	   		uploadRows();
-	   }
+		url: url,
+		type: 'POST',
+		data: json,
+		headers: {
+			'Content-Type': 'application/json'
+		},	   
+		success: function(response) {
+			successCount++;
+			console.log("success count");
+			console.log(successCount);
+			uploadRows();  
+		},
+		error: function(response){
+			row.error=response.responseText
+			errorData.push(row);
+			uploadRows();
+		}
 	});
 
 }
@@ -76,13 +97,24 @@ function getBrandList(){
 
 	var url = getBrandUrl();
 	$.ajax({
-	   url: url,
-	   type: 'GET',
-	   success: function(data) {
-	   		displayBrandList(data);  
-	   },
-	   error: handleAjaxError
+		url: url,
+		type: 'GET',
+		success: function(data) {
+			displayBrandList(data);  
+		},
+		error: errorPopUp
 	});
+}
+
+function errorPopUp(response){
+	var response = JSON.parse(response.responseText);
+	$("#error-message").text(response.message);
+	$('#error-alert').modal('toggle');
+	setTimeout(function() {
+	    $('#error-alert').modal('toggle');
+	}, 3000);
+	
+	
 }
 
 function displayBrandList(data){
@@ -90,15 +122,14 @@ function displayBrandList(data){
 	$tbody.empty();
 	for(var i in data){
 		var e = data[i];
-		var buttonHtml = '<button onclick="deleteBrand(' + e.id + ')">delete</button>'
-		buttonHtml += ' <button onclick="displayEditBrand(' + e.id + ')">edit</button>'
+		var buttonHtml = ' <button class="btn btn-dark btn-sm" onclick="displayEditBrand(' + e.id + ')">Edit</button>';
 		var row = '<tr>'
 		+ '<td>' + e.id + '</td>'
 		+ '<td>' + e.brand + '</td>'
 		+ '<td>'  + e.category + '</td>'
 		+ '<td>' + buttonHtml + '</td>'
 		+ '</tr>';
-        $tbody.append(row);
+		$tbody.append(row);
 	}
 }
 
@@ -106,80 +137,80 @@ function displayBrand(data){
 	$("#brand-edit-form input[name=brand]").val(data.brand);	
 	$("#brand-edit-form input[name=category]").val(data.category);	
 	$("#brand-edit-form input[name=id]").val(data.id);	
+	$("#update-brand").prop('disabled', true);
+	brandName=data.brand;
+	categoryName=data.category;
 	$('#edit-brand-modal').modal('toggle');
 }
 
 function displayEditBrand(id){
 	var url = getBrandUrl() + "/" + id;
 	$.ajax({
-	   url: url,
-	   type: 'GET',
-	   success: function(data) {
-	   		displayBrand(data);   
-	   },
-	   error: handleAjaxError
+		url: url,
+		type: 'GET',
+		success: function(data) {
+			displayBrand(data);   
+		},
+		error: handleAjaxError
 	});	
 }
 
 
 function updateBrand(event){
-	$('#edit-brand-modal').modal('toggle');
+	
 	//Get the ID
 	var id = $("#brand-edit-form input[name=id]").val();	
 	var url = getBrandUrl() + "/" + id;
 
 	//Set the values to update
 	var $form = $("#brand-edit-form");
+	console.log("update brand");
+	console.log($form);
 	var json = toJson($form);
 
 	$.ajax({
-	   url: url,
-	   type: 'PUT',
-	   data: json,
-	   headers: {
-       	'Content-Type': 'application/json'
-       },	   
-	   success: function(response) {
-	   		getBrandList();   
-	   },
-	   error: handleAjaxError
+		url: url,
+		type: 'PUT',
+		data: json,
+		headers: {
+			'Content-Type': 'application/json'
+		},	   
+		success: function(response) {
+			$('#edit-brand-modal').modal('toggle');
+			successPopup("Brand is updated");
+			getBrandList();   
+		},
+		error: handleAjaxError
 	});
-
+	
 	return false;
-}
-
-function deleteBrand(id){
-	var url = getBrandUrl() + "/" + id;
-
-	$.ajax({
-	   url: url,
-	   type: 'DELETE',
-	   success: function(data) {
-	   		getBrandList();  
-	   },
-	   error: handleAjaxError
-	});
 }
 
 function addBrand(){
 	//Set the values to update
-	var $form = $("#brand-form");
+	
+
+	
+	var $form = $("#brand-add-form");
+
 	var json = toJson($form);
 	var url = getBrandUrl();
 
 	$.ajax({
-	   url: url,
-	   type: 'POST',
-	   data: json,
-	   headers: {
-       	'Content-Type': 'application/json'
-       },	   
-	   success: function(response) {
-	   		getBrandList();  
-	   },
-	   error: handleAjaxError
+		url: url,
+		type: 'POST',
+		data: json,
+		headers: {
+			'Content-Type': 'application/json'
+		},	   
+		success: function(response) {
+			$('#add-brand-modal').modal('toggle');
+			successPopup("Brand is added");
+			getBrandList();  
+		},
+		error: handleAjaxError
 	});
-
+	
 	return false;
 }
 
@@ -190,6 +221,7 @@ function resetUploadDialog(){
 	$('#brandFileName').html("Choose File");
 	//Reset various counts
 	processCount = 0;
+	successCount=0;
 	fileData = [];
 	errorData = [];
 	//Update counts	
@@ -198,12 +230,19 @@ function resetUploadDialog(){
 
 function updateUploadDialog(){
 	$('#rowCount').html("" + fileData.length);
-	$('#processCount').html("" + processCount);
+	$('#successCount').html("" + successCount);
+	$("#errorCount").css("color", "black");
+	if(errorData.length>0){
+		$("#errorCount").css("color", "red");
+	}
+
 	$('#errorCount').html("" + errorData.length);
 }
 
 function displayUploadData(){
- 	resetUploadDialog(); 	
+	resetUploadDialog(); 
+	$("#download-errors").prop('disabled', true);
+	$("#process-data").prop('disabled', true);
 	$('#upload-brand-modal').modal('toggle');
 }
 
@@ -211,6 +250,24 @@ function updateFileName(){
 	var $file = $('#brandFile');
 	var fileName = $file.val();
 	$('#brandFileName').html(fileName);
+	$('#process-data').prop('disabled',false);
+	$("#download-errors").prop('disabled', true);
+	processCount = 0;
+	successCount=0;
+	fileData = [];
+	errorData = [];
+	$('#rowCount').html("" + fileData.length);
+	$('#successCount').html("" + successCount);
+	$("#errorCount").css("color", "black");
+$('#errorCount').html("" + errorData.length);
+}
+
+function displayAddModal(){
+	 $("#add-brand").prop('disabled', true);
+	 $( '#brand-add-form' ).each(function(){
+   			 this.reset();
+				});
+	$('#add-brand-modal').modal('toggle');
 }
 
 function init(){
@@ -218,12 +275,35 @@ function init(){
 	$('#update-brand').click(updateBrand);
 	$('#refresh-data').click(getBrandList);
 	$('#upload-data').click(displayUploadData);
+	$('#add-data').click(displayAddModal);
 	$('#process-data').click(processData);
 	$('#download-errors').click(downloadErrors);
-    $('#brandFile').on('change', updateFileName)
+	$('#brandFile').on('change', updateFileName);
+
 }
-
-
 
 $(document).ready(init);
 $(document).ready(getBrandList);
+
+
+
+$('#brand-edit-form input[name=brand],#brand-edit-form input[name=category] ').on("input",function(){
+  if (($('#brand-edit-form input[name=brand]').val().length>0 && $('#brand-edit-form input[name=brand]').val()!=brandName) ||
+  	($('#brand-edit-form input[name=category]').val().length>0 && $('#brand-edit-form input[name=category]').val()!=categoryName) ){
+    $("#update-brand").prop('disabled', false);
+  }else {
+        $("#update-brand").prop("disabled", true);
+    }
+});
+
+$('#brand-add-form input[name=brand],#brand-add-form input[name=category] ').on("input",function(){
+  
+    if ($('#brand-add-form input[name=brand]').val().length   >   0   &&
+        $('#brand-add-form input[name=category] ').val().length  >   0  ) {
+        $("#add-brand").prop("disabled", false);
+    }
+    else {
+        $("#add-brand").prop("disabled", true);
+    }
+  
+});

@@ -1,93 +1,38 @@
 <!DOCTYPE html>
 <html>
-  <head th:replace="snippets.html :: name_head"></head>
+<head th:replace="snippets.html :: name_head"></head>
 <body>
 
   <nav th:replace="snippets.html :: name_app_navbar"></nav>
-
-  <br /><br />
-<div class="container">
-
-
-<div class="container" >
-  <div class="row">
-    <div class="col-sm-6">
-     <form method="post" id="category_form" >
-      <div class="form-group">
-       <label>category </label>
-       
-       <select id="category-dropdown" name="category"  multiple class="form-control dropdown-toggle" ></select>
-       
-     </button>
-     </div>
-   </form>
- </div>
- <div class="col-sm-6">
-  <form method="post" id="brand_form" >
-    <div class="form-group">
-     <label>brand </label>
-     <select id="brand-dropdown" name="brand" multiple class="form-control" >
-     </select>
-   </div>
- </form>
-</div>
-</div>
-<div class="row">
-  <div class="col-sm-6">
-    <form method="post" id="startdate_form">
-      <div class="form-group">
-        <label>Start date </label>
-        <input type="date" id="startdate_dropdown" name="startdate" max="2014-07-11" value="2000-01-01">
-      </div>
-    </form>
-  </div>
-  <div class="col-sm-6">
-   <form method="post" id="enddate_form">
-    <div class="form-group">
-      <label>End date </label>
-      <input type="date" id="enddate_dropdown" name="enddate" max="2014-07-11" value="2040-06-19">
-    </div>
-  </form>
-</div>
-</div>
-<div class="form-group">
-  <button type="button" class="btn btn-primary" id="apply-dropdown">Apply</button>
-</div>
-</div>
-
-
-
+  
+  <br>
+  <div class="container">
+<h4>Brand Report</h4>
+    <br>
 
 <div class="row">
-
  <div class="col-12">
   <table class="table table-striped" id="inventoryreport-table">
     <thead>
-      <tr>
-        
+      <tr>        
         <th scope="col">Brand</th>
-       
-        <th scope="col">Revenue</th>
+        <th scope="col">Category</th>
       </tr>
     </thead>
     <tbody>
-      <tr>
-        
+      <tr> 
         <td>cate</td>
-       
         <td>10</td>
       </tr>
-      
     </tbody>
   </table>
+</div>
+</div>
 
 </div>
-</div>
-</div>
-
+<footer th:replace="snippets.html :: name_footer"></footer>
 <script th:src="@{/static/brandreport.js}"/></script>
-<script th:src="@{/static/app.js}"/></script>
-<script th:src="@{/static/papaparse.min.js}"/></script>
+
 </body>
 </html>
 

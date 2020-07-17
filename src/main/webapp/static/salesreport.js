@@ -1,10 +1,8 @@
 
 function getUrl(){
 	var baseUrl = $("meta[name=baseUrl]").attr("content")
-	return baseUrl + "/api/salesreport";
+	return baseUrl + "/api/orderitem/report";
 }
-
-
 
 function getReportList(){
 	var url = getUrl();
@@ -30,15 +28,15 @@ function displayEmployeeList(data){
 		
 		var row = '<tr>'
 		+ '<td>' + e.category + '</td>'
-		+ '<td>'  + e.revenue + '</td>'
+		+ '<td>'  + e.revenue.toFixed(2) + '</td>'
 		+ '</tr>';
 		$tbody.append(row);
 	}
 }
 
-function setCategoryDropDown(){
+function setCategoryDropDown(applyDropdown){
 	var baseUrl = $("meta[name=baseUrl]").attr("content");
-	var url=baseUrl+"/api/list/category";
+	var url=baseUrl+"/api/brand/distinctcategories";
 
 	$.ajax({
 		url: url,
@@ -47,14 +45,15 @@ function setCategoryDropDown(){
 			console.log("setCategoryDropDown");
 			console.log(data);
 			displayCategoryDropDown(data);  
+			applyDropdown();
 		},
 		error: handleAjaxError
 	});
 }
 
-function setBrandDropDown(){
+function setBrandDropDown(setCategoryDropDown,applyDropdown){
 	var baseUrl = $("meta[name=baseUrl]").attr("content");
-	var url=baseUrl+"/api/list/brands";
+	var url=baseUrl+"/api/brand/distinctbrands";
 
 	$.ajax({
 		url: url,
@@ -63,6 +62,7 @@ function setBrandDropDown(){
 			console.log("setBrandDropDown");
 			console.log(data);
 			displayBrandDropDown(data);  
+			setCategoryDropDown(applyDropdown);
 		},
 		error: handleAjaxError
 	});
@@ -105,7 +105,7 @@ function displayBrandDropDown(data){
 	$("#brand-dropdown").multiselect('selectAll', false);
 	$("#brand-dropdown").multiselect('updateButtonText');
 
-	applyDropdown();
+	
 }
 
 function setDropDown(){
@@ -126,8 +126,8 @@ function setDropDown(){
 		enableCaseInsensitiveFiltering: true,
 		buttonWidth:'400px'
 	});
-	setCategoryDropDown();
-	setBrandDropDown();
+	setBrandDropDown(setCategoryDropDown,applyDropdown);
+	
 	
 }
 
@@ -148,41 +148,42 @@ function toJsonArrays($form){
 	data[serialized[s]['name']]=data1;
 	return data;
 
-    // var json = JSON.stringify(data);
-    // return json;
 }
 
 function toJsonDate($form){
 	var serialized = $form.serializeArray();
-	console.log(serialized);
+	
+	var dateobj = new Date(serialized[0]['value']); 
+	if(serialized[0]['name']=='endDate'){
+  		dateobj.setDate(dateobj.getDate() + 1);
+  	}
+	
+   var date = dateobj.toISOString(); 
+   console.log("jsondate");
+   console.log(dateobj);
 	var s = '';
 	var data = {};
 	for(s in serialized){
-		data[serialized[s]['name']] = serialized[s]['value']
+		data[serialized[s]['name']] = date;
 	}
 	return data;
 }
 
 function check($form){
 	var serialized = $form.serializeArray();
-	var i=false;
 	if(Array.isArray(serialized) && serialized.length)
 	{
-		i=true;
+		return true;
 	}
-	if(i==false){
-		
-		return false;
-
-	}
-	return true;
+	return false;
 }
 function applyDropdown(){
 	$form = $("#category_form");
 	console.log("apply dropdown category_form");
 	console.log($form);
 	if(check($form)==false){
-		alert("please select atleast one category");
+		 $("#error-message").text("please select atleast one category");
+    	$('#error-alert').modal('toggle');
 		return false;	
 	}
 	var json = toJsonArrays($form);
@@ -190,7 +191,8 @@ function applyDropdown(){
 	$form1 = $("#brand_form");
 		
 	if(check($form1)==false){
-		alert("please select atleast one brand");
+		 $("#error-message").text("please select atleast one category");
+    	$('#error-alert').modal('toggle');
 		return false;	
 
 	}

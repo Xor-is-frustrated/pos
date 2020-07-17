@@ -4,10 +4,19 @@ function getInventoryUrl(){
 	return baseUrl + "/api/inventory";
 }
 
+// FILE UPLOAD METHODS
+var fileData = [];
+var errorData = [];
+var processCount = 0;
+var successCount =0;
+var inventoryQuantity=0;
+
 //BUTTON ACTIONS
 function addInventory(event){
 	//Set the values to update
-	var $form = $("#inventory-form");
+	
+	var $form = $("#inventory-add-form");
+	
 	var json = toJson($form);
 	var url = getInventoryUrl();
 
@@ -19,16 +28,23 @@ function addInventory(event){
        	'Content-Type': 'application/json'
        },	   
 	   success: function(response) {
+	   	$( '#inventory-add-form' ).each(function(){
+   			 this.reset();
+				});
+	   	$('#add-inventory-modal').modal('toggle');
+
+	   		successPopup("Inventory is added");
 	   		getInventoryList();  
 	   },
 	   error: handleAjaxError
+	   
 	});
-
+	
 	return false;
 }
 
 function updateInventory(event){
-	$('#edit-inventory-modal').modal('toggle');
+	
 	//Get the ID
 	var id = $("#inventory-edit-form input[name=id]").val();	
 	var url = getInventoryUrl() + "/" + id;
@@ -45,6 +61,8 @@ function updateInventory(event){
        	'Content-Type': 'application/json'
        },	   
 	   success: function(response) {
+	   	$('#edit-inventory-modal').modal('toggle');
+	   		successPopup("Inventory is updated");
 	   		getInventoryList();   
 	   },
 	   error: handleAjaxError
@@ -79,14 +97,15 @@ function deleteInventory(id){
 	});
 }
 
-// FILE UPLOAD METHODS
-var fileData = [];
-var errorData = [];
-var processCount = 0;
 
 
 function processData(){
+	$('#process-data').prop('disabled',true);
 	var file = $('#inventoryFile')[0].files[0];
+	processCount = 0;
+	successCount=0;
+	fileData = [];
+	errorData = [];
 	readFileData(file, readFileDataCallback);
 }
 
@@ -97,7 +116,7 @@ function readFileDataCallback(results){
 	console.log(fileData.length);
 	if(fileData.length>5000)
 	{
-		alert("the tsv file is too big, please reduce the number of rows to less than 5");
+		alert("the Tsv file is too big, please reduce the number of rows to less than 5000");
 		return ;
 	}
 	
@@ -114,7 +133,18 @@ function uploadRows(){
 	}
 	//If everything processed then return
 	if(processCount==fileData.length){
-		return;
+		getInventoryList();
+		var $file = $('#inventoryFile');
+			$file.val('');
+			$('#inventoryFileName').html("Choose File");
+		if(errorData.length>0){
+			$("#download-errors").prop('disabled', false);
+		}
+		else{
+			$("#download-errors").prop('disabled', true);
+			
+		}
+
 	}
 	
 	//Process next row
@@ -133,6 +163,7 @@ function uploadRows(){
        	'Content-Type': 'application/json'
        },	   
 	   success: function(response) {
+	   	successCount++;
 	   		uploadRows();  
 	   },
 	   error: function(response){
@@ -155,8 +186,8 @@ function displayInventoryList(data){
 	$tbody.empty();
 	for(var i in data){
 		var e = data[i];
-		var buttonHtml = '<button onclick="deleteInventory(' + e.id + ')">delete</button>'
-		buttonHtml += ' <button onclick="displayEditInventory(' + e.id + ')">edit</button>'
+		
+		var buttonHtml = ' <button class="btn btn-dark btn-sm" onclick="displayEditInventory(' + e.id + ')">Edit</button>';
 		var row = '<tr>'
 		+ '<td>' + e.id + '</td>'
 		+ '<td>' + e.product + '</td>'
@@ -188,34 +219,62 @@ function resetUploadDialog(){
 	processCount = 0;
 	fileData = [];
 	errorData = [];
+	successCount=0;
 	//Update counts	
 	updateUploadDialog();
 }
 
 function updateUploadDialog(){
 	$('#rowCount').html("" + fileData.length);
-	$('#processCount').html("" + processCount);
+	$('#successCount').html("" + successCount);
+	$("#errorCount").css("color", "black");
+	if(errorData.length>0){
+		$("#errorCount").css("color", "red");
+	}
 	$('#errorCount').html("" + errorData.length);
 }
 
 function updateFileName(){
 	var $file = $('#inventoryFile');
 	var fileName = $file.val();
+	$('#process-data').prop('disabled',false);
+	$("#download-errors").prop('disabled', true);
 	$('#inventoryFileName').html(fileName);
+	processCount = 0;
+	successCount=0;
+	fileData = [];
+	errorData = [];
+	$('#rowCount').html("" + fileData.length);
+	$('#successCount').html("" + successCount);
+	$("#errorCount").css("color", "black");
+$('#errorCount').html("" + errorData.length);
 }
 
 function displayUploadData(){
  	resetUploadDialog(); 	
+ 	$("#download-errors").prop('disabled', true);
+ 	$("#process-data").prop('disabled', true);
 	$('#upload-inventory-modal').modal('toggle');
 }
 
 function displayInventory(data){
 	$("#inventory-edit-form input[name=product]").val(data.product);	
 	$("#inventory-edit-form input[name=quantity]").val(data.quantity);	
-	$("#inventory-edit-form input[name=id]").val(data.id);	
+	$("#inventory-edit-form input[name=id]").val(data.id);
+	$("#update-inventory").prop('disabled', true);	
+	inventoryQuantity= data.quantity
 	$('#edit-inventory-modal').modal('toggle');
 }
 
+
+function displayAddData(){
+	
+	$("#add-inventory").prop('disabled', true);
+	$( '#inventory-add-form' ).each(function(){
+   			 this.reset();
+				});
+	$('#add-inventory-modal').modal('toggle');
+}
 
 //INITIALIZATION CODE
 function init(){
@@ -224,10 +283,77 @@ function init(){
 	$('#refresh-data').click(getInventoryList);
 	$('#upload-data').click(displayUploadData);
 	$('#process-data').click(processData);
+	$('#add-data').click(displayAddData);
 	$('#download-errors').click(downloadErrors);
     $('#inventoryFile').on('change', updateFileName)
 }
 
 $(document).ready(init);
 $(document).ready(getInventoryList);
+
+
+$('#inventory-edit-form input[name=quantity] ').on("input",function(){
+  
+    if ($('#inventory-edit-form input[name=quantity] ').val().length  >   0 && $('#inventory-edit-form input[name=quantity] ').val()!=inventoryQuantity ) {
+        $("#update-inventory").prop("disabled", false);
+    }
+    else {
+        $("#update-inventory").prop("disabled", true);
+    }
+  
+});
+
+$('#inventory-add-form input[name=product],#inventory-add-form input[name=quantity] ').on("input",function(){
+  
+    if ($('#inventory-add-form input[name=product]').val().length   >   0   &&
+        $('#inventory-add-form input[name=quantity] ').val().length  >   0  ) {
+        $("#add-inventory").prop("disabled", false);
+    }
+    else {
+        $("#add-inventory").prop("disabled", true);
+    }
+  
+});
+
+$('#inventory-add-form input[name=product]').on("input",function(){
+	var value=$('#inventory-add-form input[name=product]').val();
+  if(( value.length ==   0) || (Math.floor(value) == (value) && $.isNumeric(value))) 
+ 	{
+ 		$("#check-productId").text("");
+ 		
+ 	}
+ 	else{
+ 		$("#check-productId").text("Please enter Integer value");
+ 		$("#add-inventory").prop("disabled", true);
+ 	}
+  
+});
+
+$('#inventory-add-form input[name=quantity]').on("input",function(){
+	var value=$('#inventory-add-form input[name=quantity]').val();
+  if(( value.length ==   0) || (Math.floor(value) == (value) && $.isNumeric(value))) 
+ 	{
+ 		$("#check-quantity").text("");
+ 		
+ 	}
+ 	else{
+ 		$("#check-quantity").text("Please enter Integer value");
+ 		$("#add-inventory").prop("disabled", true);
+ 	}
+  
+});
+
+$('#inventory-edit-form input[name=quantity]').on("input",function(){
+	var value=$('#inventory-edit-form input[name=quantity]').val();
+  if(( value.length ==   0) || (Math.floor(value) == (value) && $.isNumeric(value))) 
+ 	{
+ 		$("#check-edit-quantity").text("");
+ 		
+ 	}
+ 	else{
+ 		$("#check-edit-quantity").text("Please enter Integer value");
+ 		$("#update-inventory").prop("disabled", true);
+ 	}
+  
+});
 

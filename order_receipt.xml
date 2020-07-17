@@ -1,11 +1,24 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<Invoice id="0">
+<Invoice>
+    <id>3</id>
     <items>
-        <quantity>13</quantity>
-        <id>0</id>
-        <mrp>12.0</mrp>
-        <product>kitkat</product>
-        <sellingprice>156.0</sellingprice>
+        <barcode>amulchocolate</barcode>
+        <orderId>3</orderId>
+        <quantity>6</quantity>
+        <sellingPrice>150.0</sellingPrice>
+        <id>4</id>
+        <itemTotalCost>900.0</itemTotalCost>
+        <product>amul dark chocolate</product>
     </items>
-    <sellingprice>156.0</sellingprice>
+    <items>
+        <barcode>patanjalitoothpaste</barcode>
+        <orderId>3</orderId>
+        <quantity>100</quantity>
+        <sellingPrice>1.2</sellingPrice>
+        <id>5</id>
+        <itemTotalCost>120.0</itemTotalCost>
+        <product>patanjali toothpaste</product>
+    </items>
+    <orderDate>2020-07-17 17:48:40</orderDate>
+    <sellingprice>1020.0</sellingprice>
 </Invoice>
