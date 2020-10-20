@@ -28,7 +28,7 @@ public class BrandController {
 	@ApiOperation(value = "Adds a brand")
 	@RequestMapping(path = "", method = RequestMethod.POST)
 	public void add(@RequestBody BrandForm form) throws ApiException {
-		dto.add(form);
+		dto.addForm(form);
 	}
   
 	@ApiOperation(value = "Gets a brand by id")
