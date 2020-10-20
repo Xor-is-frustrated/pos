@@ -95,7 +95,7 @@ public class BrandDtoTest  extends AbstractUnitTest {
 		p1.setBrand("dabur");
 		p1.setCategory("drinks");
 		service.add(p1);
-		List<BrandData>list=brandDto.getAll();
+		List<BrandData>list=brandDto.getItAll();
 		assertEquals("health", list.get(0).getCategory());
 		assertEquals("drinks", list.get(1).getCategory());
 		assertEquals("nestle", list.get(0).getBrand());
