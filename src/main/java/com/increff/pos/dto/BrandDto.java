@@ -24,7 +24,7 @@ public class BrandDto {
 		return ConvertorUtil.convert(brand);         
 	}
 
-	public BrandData get(int id) throws ApiException {
+	public BrandData getIt(int id) throws ApiException {
 		BrandPojo pojo = brandService.get(id);
 		return ConvertorUtil.convert(pojo);
 	}
