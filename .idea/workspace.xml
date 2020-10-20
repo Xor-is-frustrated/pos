@@ -35,7 +35,11 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3e0b1973-0eec-4813-bfde-d4e57a7e0b9f" name="Default Changelist" comment="" />
+    <list default="true" id="3e0b1973-0eec-4813-bfde-d4e57a7e0b9f" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/increff/pos/controller/BrandController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/increff/pos/controller/BrandController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/increff/pos/dto/BrandDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/increff/pos/dto/BrandDto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/increff/pos/dto/BrandDtoTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/increff/pos/dto/BrandDtoTest.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
