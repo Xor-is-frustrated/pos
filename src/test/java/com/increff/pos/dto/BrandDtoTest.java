@@ -28,7 +28,7 @@ public class BrandDtoTest  extends AbstractUnitTest {
 		form.setBrand("brand");
 		form.setCategory("category");
 		
-		brandDto.addForm(form);
+		brandDto.addIt(form);
 		
 	}
 	
