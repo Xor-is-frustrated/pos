@@ -43,7 +43,7 @@ public class BrandDtoTest  extends AbstractUnitTest {
 		expected.setBrand("nestle");
 		expected.setCategory("health");
 		
-		BrandData actual = brandDto.get(pojo.getId());
+		BrandData actual = brandDto.getIt(pojo.getId());
 		
 		assertEquals(expected.getBrand(), actual.getBrand());
 		assertEquals(expected.getCategory(), actual.getCategory());
