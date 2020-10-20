@@ -47,7 +47,7 @@ public class BrandController {
 	@ApiOperation(value = "Updates a brand")
 	@RequestMapping(path = "/{id}", method = RequestMethod.PUT)
 	public void update(@PathVariable int id, @RequestBody BrandForm form) throws ApiException {
-		dto.update(id, form);
+		dto.updateIt(id, form);
 	}
 
 	@ApiOperation(value = "Gets distinct list of categories")

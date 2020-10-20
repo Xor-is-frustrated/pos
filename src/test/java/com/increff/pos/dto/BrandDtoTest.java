@@ -114,7 +114,7 @@ public class BrandDtoTest  extends AbstractUnitTest {
 		p1.setBrand("dabur");
 		p1.setCategory("drinks");
 		
-		brandDto.update(pojo.getId(),p1);
+		brandDto.updateIt(pojo.getId(),p1);
 		BrandPojo actual = service.get(pojo.getId());
 		
 		assertEquals(p1.getBrand(), actual.getBrand());

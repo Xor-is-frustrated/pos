@@ -35,7 +35,7 @@ public class BrandDto {
 		return ConvertorUtil.convertBrands(list1);
 	}
 
-	public void update(int id, BrandForm form) throws ApiException {
+	public void updateIt(int id, BrandForm form) throws ApiException {
 		BrandPojo pojo = ConvertorUtil.convert(form);
 		brandService.update(id, pojo);
 	}
