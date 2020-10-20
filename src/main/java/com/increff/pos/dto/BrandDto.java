@@ -17,9 +17,9 @@ public class BrandDto {
 
 	@Autowired
 	private BrandService brandService; 
-
-	public BrandData add(BrandForm form) throws ApiException {
-		BrandPojo pojo = ConvertorUtil.convert(form);
+	// adding comments to it and changing it to brandForm
+	public BrandData add(BrandForm brandForm) throws ApiException {
+		BrandPojo pojo = ConvertorUtil.convert(brandForm);
 		BrandPojo brand = brandService.add(pojo);
 		return ConvertorUtil.convert(brand);         
 	}
