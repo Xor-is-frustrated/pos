@@ -40,7 +40,7 @@ public class BrandController {
 	@ApiOperation(value = "Gets list of all brands")
 	@RequestMapping(method = RequestMethod.GET)
 	public List<BrandData> getAll() {
-		return dto.getAll();
+		return dto.getItAllNow();
 
 	}
 

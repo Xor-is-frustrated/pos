@@ -29,7 +29,7 @@ public class BrandDto {
 		return ConvertorUtil.convert(pojo);
 	}
 
-	public List<BrandData> getAll() {
+	public List<BrandData> getItAllNow() {
 		List<BrandPojo> list = brandService.getAll();
 		return ConvertorUtil.convertBrands(list);
 	}
