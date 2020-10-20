@@ -36,14 +36,21 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="3e0b1973-0eec-4813-bfde-d4e57a7e0b9f" name="Default Changelist" comment="">
+<<<<<<< HEAD
       <change beforePath="$PROJECT_DIR$/src/main/java/com/increff/pos/controller/BrandController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/increff/pos/controller/BrandController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/increff/pos/dto/BrandDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/increff/pos/dto/BrandDto.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/test/java/com/increff/pos/dto/BrandDtoTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/increff/pos/dto/BrandDtoTest.java" afterDir="false" />
+=======
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+>>>>>>> 453955805c622f326abfd39fb83666fb69cb7df4
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Pull.Settings">
+    <option name="BRANCH" value="master" />
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -69,5 +76,11 @@
       </map>
     </option>
     <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="1014" y="366" width="728" height="482" key="MultipleFileMergeDialog" timestamp="1603169240502">
+      <screen x="72" y="27" width="1848" height="1053" />
+    </state>
+    <state x="1014" y="366" width="728" height="482" key="MultipleFileMergeDialog/72.27.1848.1053@72.27.1848.1053" timestamp="1603169240502" />
   </component>
 </project>

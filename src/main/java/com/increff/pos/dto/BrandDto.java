@@ -31,8 +31,8 @@ public class BrandDto {
 	}
 
 	public List<BrandData> getItAllNow() {
-		List<BrandPojo> list = brandService.getAll();
-		return ConvertorUtil.convertBrands(list);
+		List<BrandPojo> list1 = brandService.getAll();
+		return ConvertorUtil.convertBrands(list1);
 	}
 
 	public void update(int id, BrandForm form) throws ApiException {
