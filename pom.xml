@@ -23,7 +23,7 @@
 		<swagger.version>2.4.0</swagger.version>
 		<jackson.version>2.9.8</jackson.version>
 		<thymeleaf.version>3.0.9.RELEASE</thymeleaf.version>
-		<hibernate.version>5.4.0.Final</hibernate.version>
+		<hibernate.version>5.4.24.Final</hibernate.version>
 		<mysql.version>8.0.17</mysql.version>
 		<apache.xmlgraphics.version>2.3</apache.xmlgraphics.version>
 		<junit.version>4.12</junit.version>
